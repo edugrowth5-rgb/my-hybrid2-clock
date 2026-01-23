@@ -1,15 +1,17 @@
 {
-  "name": "Pink Neon Hybrid Clock",
-  "short_name": "PinkClock",
+  "name": "Pink Blue Hybrid Clock",
+  "short_name": "PB-Clock",
   "start_url": "index.html",
   "display": "standalone",
   "background_color": "#ffffff",
   "theme_color": "#ff007f",
+  "orientation": "portrait",
   "icons": [
     {
       "src": "https://cdn-icons-png.flaticon.com/512/3815/3815454.png",
       "sizes": "192x192",
-      "type": "image/png"
+      "type": "image/png",
+      "purpose": "any maskable"
     },
     {
       "src": "https://cdn-icons-png.flaticon.com/512/3815/3815454.png",
