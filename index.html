@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Pink Neon Clock</title>
+    <link rel="manifest" href="manifest.json">
+    <style>
+        :root { 
+            --bg: #ffffff; /* सफ़ेद बैकग्राउंड */
+            --pink: #ff007f; /* गहरा गुलाबी */
+            --glow: #ff66b2; /* हल्का गुलाबी चमक के लिए */
+        }
+        
+        body {
+            margin: 0; background: var(--bg);
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            height: 100vh; font-family: 'Segoe UI', sans-serif; overflow: hidden;
+        }
+
+        /* Clock Box */
+        .widget-box {
+            width: 320px; height: 350px;
+            background: #fff; border-radius: 40px;
+            border: 4px solid var(--pink); display: flex;
+            flex-direction: column; align-items: center;
+            justify-content: center; box-shadow: 0 10px 40px rgba(255, 0, 127, 0.2);
+            position: relative;
+        }
+
+        /* Analog Face */
+        .analog-face {
+            width: 220px; height: 220px;
+            border: 5px solid var(--pink); border-radius: 50%;
+            position: relative; margin-bottom: 20px;
+            background: #fff;
+            box-shadow: 0 0 20px var(--glow);
+        }
+
+        .number {
+            position: absolute; width: 100%; height: 100%;
+            text-align: center; font-weight: bold; font-size: 20px;
+            color: var(--pink); text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+            padding: 8px; box-sizing: border-box;
+        }
+
+        /* Number Positions */
+        .n1 { transform: rotate(30deg); }  .n1 span { transform: rotate(-30deg); display: inline-block; }
+        .n2 { transform: rotate(60deg); }  .n2 span { transform: rotate(-60deg); display: inline-block; }
+        .n3 { transform: rotate(90deg); }  .n3 span { transform: rotate(-90deg); display: inline-block; }
+        .n4 { transform: rotate(120deg); } .n4 span { transform: rotate(-120deg); display: inline-block; }
+        .n5 { transform: rotate(150deg); } .n5 span { transform: rotate(-150deg); display: inline-block; }
+        .n6 { transform: rotate(180deg); } .n6 span { transform: rotate(-180deg); display: inline-block; }
+        .n7 { transform: rotate(210deg); } .n7 span { transform: rotate(-210deg); display: inline-block; }
+        .n8 { transform: rotate(240deg); } .n8 span { transform: rotate(-240deg); display: inline-block; }
+        .n9 { transform: rotate(270deg); } .n9 span { transform: rotate(-270deg); display: inline-block; }
+        .n10 { transform: rotate(300deg); } .n10 span { transform: rotate(-300deg); display: inline-block; }
+        .n11 { transform: rotate(330deg); } .n11 span { transform: rotate(-330deg); display: inline-block; }
+        .n12 { transform: rotate(0deg); }
+
+        /* Hands */
+        .hand {
+            position: absolute; bottom: 50%; left: 50%;
+            transform-origin: bottom; border-radius: 10px; transform: translateX(-50%);
+        }
+        .hour { width: 7px; height: 55px; background: #333; z-index: 3; }
+        .min { width: 5px; height: 80px; background: var(--pink); z-index: 2; box-shadow: 0 0 8px var(--glow); }
+        .sec { width: 2px; height: 95px; background: #ff4d4d; z-index: 1; }
+
+        .center {
+            position: absolute; top: 50%; left: 50%;
+            width: 14px; height: 14px; background: var(--pink);
+            border-radius: 50%; transform: translate(-50%, -50%); z-index: 4;
+        }
+
+        .digital {
+            font-size: 32px; color: var(--pink); font-weight: 900;
+            font-family: 'Courier New', monospace; letter-spacing: 2px;
+        }
+
+        /* Sound Control Overlay */
+        #overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(255,255,255,0.9); z-index: 10000;
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="overlay" onclick="startClock()">
+        <h2 style="color: var(--pink);">TAP TO START CLOCK</h2>
+        <p>Tick-Tick Sound On</p>
+    </div>
+
+    <div class="widget-box">
+        <div class="analog-face">
+            <div class="number n1"><span>1</span></div><div class="number n2"><span>2</span></div>
+            <div class="number n3"><span>3</span></div><div class="number n4"><span>4</span></div>
+            <div class="number n5"><span>5</span></div><div class="number n6"><span>6</span></div>
+            <div class="number n7"><span>7</span></div><div class="number n8"><span>8</span></div>
+            <div class="number n9"><span>9</span></div><div class="number n10"><span>10</span></div>
+            <div class="number n11"><span>11</span></div><div class="number n12"><span>12</span></div>
+
+            <div class="hand hour" id="hr"></div>
+            <div class="hand min" id="mn"></div>
+            <div class="hand sec" id="sc"></div>
+            <div class="center"></div>
+        </div>
+        <div class="digital" id="digi">00:00:00</div>
+    </div>
+
+    <audio id="tick-sound" loop>
+        <source src="https://cdn.pixabay.com/audio/2022/03/15/audio_276a7e0291.mp3" type="audio/mpeg">
+    </audio>
+
+    <script>
+        function startClock() {
+            document.getElementById('overlay').style.display = 'none';
+            const audio = document.getElementById('tick-sound');
+            audio.play().catch(e => console.log("Audio play failed"));
+        }
+
+        function updateClock() {
+            const now = new Date();
+            const h = now.getHours();
+            const m = now.getMinutes();
+            const s = now.getSeconds();
+
+            document.getElementById('hr').style.transform = `translateX(-50%) rotate(${(h % 12) * 30 + m/2}deg)`;
+            document.getElementById('mn').style.transform = `translateX(-50%) rotate(${m * 6}deg)`;
+            document.getElementById('sc').style.transform = `translateX(-50%) rotate(${s * 6}deg)`;
+
+            const dH = String(h % 12 || 12).padStart(2, '0');
+            const dM = String(m).padStart(2, '0');
+            const dS = String(s).padStart(2, '0');
+            document.getElementById('digi').textContent = `${dH}:${dM}:${dS}`;
+        }
+
+        setInterval(updateClock, 1000);
+        updateClock();
+
+        if ('serviceWorker' in navigator) { navigator.serviceWorker.register('sw.js'); }
+    </script>
+</body>
+</html>
