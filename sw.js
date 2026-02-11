@@ -1,4 +1,4 @@
-const CACHE_NAME = 'pink-blue-clock-v6';
+const CACHE_NAME = 'pink-blue-clock-v7';
 const assets = [
   './',
   './index.html',
